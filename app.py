@@ -15,7 +15,23 @@ def add_cors_headers(response):
 def serve_html():
     """Serve the frontend HTML."""
     try:
-        return render_template('app.html')
+        load_status = load_details()  # Call load_details and get status
+        try:
+            return render_template('app.html', load_status=load_status)
+        except Exception as e:
+            response = jsonify({'error': f'Error rendering template: {str(e)}'})
+            return add_cors_headers(response), 500
+    except Exception as e:
+        response = jsonify({'error': str(e)})
+        return add_cors_headers(response), 500
+
+@app.route('/load_status')
+def get_load_status():
+    """Return the load status as JSON."""
+    try:
+        load_status = load_details()
+        response = jsonify(load_status)
+        return add_cors_headers(response)
     except Exception as e:
         response = jsonify({'error': str(e)})
         return add_cors_headers(response), 500
@@ -62,5 +78,4 @@ if __name__ == "__main__":
     if not os.path.exists(model_path) or not os.path.exists(columns_path):
         print("Error: Model or columns file missing. Run train.py first.")
     else:
-        load_details()
         app.run(debug=True, port=5000)

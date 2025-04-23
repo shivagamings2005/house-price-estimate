@@ -21,12 +21,14 @@ def load_details():
         with open(model_path, 'rb') as f:
             model = pickle.load(f)
         print("Model and columns loaded successfully!")
+        return {"status": "success", "message": "Model and columns loaded successfully!"}
     except FileNotFoundError as e:
-        print(f"Error: File not found - {e}")
-        raise
+        missing_file = os.path.basename(str(e.filename)) if e.filename else "unknown file"
+        print(f"Error: File not found - {missing_file}")
+        return {"status": "error", "message": f"File not found: {missing_file}"}
     except Exception as e:
         print(f"Error loading model/columns: {e}")
-        raise
+        return {"status": "error", "message": str(e)}
 
 def get_location():
     """Return available locations."""

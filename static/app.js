@@ -66,9 +66,25 @@ function onClickedEstimatePrice() {
 
 function onPageLoad() {
     console.log("Document loaded");
-    var url = "/get_location"; // Relative URL
-    console.log("Fetching locations from:", url);
-    $.get(url, function(data, status) {
+    
+    // Fetch load_status
+    var statusUrl = "/load_status";
+    console.log("Fetching load status from:", statusUrl);
+    $.get(statusUrl, function(data, status) {
+        console.log("Got response for load_status request:", data);
+        if (data && data.status) {
+            console.log("Load Status:", data);
+        } else {
+            console.log("Error loading status:", data.error || "No status in response");
+        }
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        console.log("Load status request failed:", textStatus, errorThrown, jqXHR.responseText);
+    });
+
+    // Fetch locations
+    var locationUrl = "/get_location";
+    console.log("Fetching locations from:", locationUrl);
+    $.get(locationUrl, function(data, status) {
         console.log("Got response for location_names request:", data);
         if (data && data.locations) {
             var locations = data.locations;
